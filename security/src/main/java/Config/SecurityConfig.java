@@ -18,7 +18,8 @@ public class SecurityConfig {
     private final UserDetailsService userDetailsService;
 
     public SecurityConfig(UserDetailsService userDetailsService) {
-        this.userDetailsService = userDetailsService;
+        this.userDetailsService = userDetailsService; // constructor injection of the UserDetailsService, which is used to load user details for authentication and authorization.
+        // see the user authentication and then allow the user to access the endpoint if they have the correct credentials.
     }
 
    @Bean
@@ -27,9 +28,8 @@ public class SecurityConfig {
     http
         .csrf(csrf -> csrf.disable())
         .authorizeHttpRequests(auth -> auth
-            .requestMatchers(HttpMethod.POST, "/secure/admin/userAdded").permitAll()
-            .requestMatchers("/rest/auth/**").authenticated()
-            .requestMatchers("/secure/admin/**").authenticated()
+            .requestMatchers(HttpMethod.POST, "/secure/admin/userAdded").permitAll()// allow anyone to access this endpoint to add a user
+            .requestMatchers("/secure/admin/**").authenticated()// all other endpoints under "/secure/admin/**" require authentication
             .anyRequest().permitAll()
         )
         .httpBasic(Customizer.withDefaults())
@@ -43,3 +43,6 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 }
+// this the class that has all the security configurations for our application.
+// example, which endpoints are protected, which endpoints are public, which authentication method we are using, etc.
+// In this case, we are using HTTP Basic authentication and we are allowing all users to access the "/secure/admin/userAdded" endpoint, but all other endpoints under "/rest/auth/**" and "/secure/admin/**" require authentication.
